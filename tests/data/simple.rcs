@@ -1,0 +1,18 @@
+// Simple RuneScript test file
+// This file is used for testing the parser and interpreter
+
+// Basic variable assignment
+input = "Hello, RuneScript World!"
+
+// Text processing pipeline
+normalized = input |> normalize()
+cleaned = normalized |> remove_punctuation()
+tokens = cleaned |> tokenize(" ")
+
+// Function calls
+token_count = length(tokens)
+
+// Output result
+output "Processing completed!"
+output "Token count:"
+output token_count

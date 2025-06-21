@@ -1,0 +1,42 @@
+// Korean text processing functions for testing
+// This demonstrates Spell module functionality
+
+def normalize_korean(text) = 
+  text |> trim() |> remove_extra_spaces()
+
+def korean_g2p_basic(text) = 
+  text |> hangul_to_jamo() |> apply_basic_rules()
+
+def hangul_to_jamo(text) = 
+  // Basic hangul decomposition
+  decompose_hangul_syllables(text)
+
+def apply_basic_rules(jamo_text) = 
+  // Apply basic Korean phonetic rules
+  jamo_text 
+    |> palatalization_rule()
+    |> nasalization_rule()
+
+def palatalization_rule(text) = 
+  // ㄱ + ㅣ -> ㅈ + ㅣ
+  replace_pattern(text, /ㄱㅣ/, "ㅈㅣ")
+
+def nasalization_rule(text) = 
+  // Basic nasal assimilation
+  text
+    |> replace_pattern(/ㅂㅁ/, "ㅁㅁ")
+    |> replace_pattern(/ㄱㄴ/, "ㅇㄴ")
+
+def korean_phoneme_to_ipa(phonemes) = 
+  // Convert Korean phonemes to IPA
+  phonemes
+    |> map_jamo_to_ipa()
+    |> format_ipa_output()
+
+def count_syllables(text) = 
+  // Count Korean syllables
+  text |> extract_syllables() |> length()
+
+def remove_extra_spaces(text) = 
+  // Remove extra whitespace
+  replace_pattern(text, /\s+/, " ")

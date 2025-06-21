@@ -1,0 +1,47 @@
+// Test rune definitions for Korean language processing
+// This file demonstrates Rune module functionality
+
+// Unicode block definitions
+define block hangul_syllables = U+AC00 .. U+D7AF
+define block hangul_jamo = U+1100 .. U+11FF
+define block hangul_compatibility_jamo = U+3130 .. U+318F
+define block korean_punctuation = U+3000 .. U+303F
+
+// Character group definitions
+group korean_vowels = [
+  "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", 
+  "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", 
+  "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"
+]
+
+group korean_consonants = [
+  "ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", 
+  "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", 
+  "ㅌ", "ㅍ", "ㅎ"
+]
+
+group korean_final_consonants = [
+  "ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", 
+  "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"
+]
+
+// Phonetic transformation rules
+rule palatalization: /ㄱㅣ/ => "ㅈㅣ"
+rule palatalization_t: /ㄷㅣ/ => "ㅈㅣ"
+rule palatalization_h: /ㅎㅣ/ => "ㅊㅣ"
+
+rule nasalization_bp: /ㅂㅁ/ => "ㅁㅁ"
+rule nasalization_gn: /ㄱㄴ/ => "ㅇㄴ"
+rule nasalization_dm: /ㄷㅁ/ => "ㄴㅁ"
+
+rule liquid_assimilation: /ㄴㄹ/ => "ㄹㄹ"
+rule liquid_assimilation_reverse: /ㄹㄴ/ => "ㄹㄹ"
+
+rule final_consonant_neutralization_k: /ㄱ$/ => "ㄱ"
+rule final_consonant_neutralization_t: /ㄷ$/ => "ㄷ"
+rule final_consonant_neutralization_p: /ㅂ$/ => "ㅂ"
+
+// Language profiles
+lang "ko-KR" uses hangul_syllables, hangul_jamo, korean_vowels, korean_consonants
+lang "ko-KP" uses hangul_syllables, hangul_jamo, korean_vowels, korean_consonants
+lang "ko-mixed" uses hangul_syllables, korean_punctuation, korean_vowels
