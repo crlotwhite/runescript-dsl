@@ -31,13 +31,12 @@ git clone https://github.com/crlotwhite/runescript-dsl.git
 cd runescript-dsl
 
 # 빌드 (C++20 컴파일러 필요)
+make build
+
+# 또는 CMake 직접 사용
 mkdir build && cd build
 cmake ..
 make
-
-# Haskell 도구 빌드 (선택적)
-cd ../haskell
-stack build
 ```
 
 ### 예제 사용법
@@ -45,13 +44,27 @@ stack build
 ```runescript
 // example.rcs
 input = "안녕하세요, RuneScript입니다!"
-result = input |> normalize() |> g2p.korean() |> phonemize()
+result = input |> normalize() |> korean_g2p() |> phonemize()
+output result
 ```
 
 ```spell
 // korean_g2p.spell
 def korean_g2p(text) = 
   text |> hangul_to_jamo() |> apply_phonetic_rules()
+```
+
+### 실행
+
+```bash
+# 기본 실행
+./build/runescript examples/basic/hello.rcs
+
+# 설정 파일과 함께 실행
+./build/runescript --caster examples/basic/pipeline.caster examples/basic/hello.rcs
+
+# 디버그 모드
+./build/runescript --debug examples/basic/hello.rcs
 ```
 
 ## 🏗️ 아키텍처
@@ -61,25 +74,127 @@ def korean_g2p(text) =
 - **Optimizer**: IR 최적화 패스 및 성능 향상
 - **Language Support**: 다국어 텍스트 처리 및 음성학적 변환
 
+### 주요 컴포넌트
+
+```
+src/
+├── core/                 # C++ 핵심 엔진
+│   ├── parser.cpp       # DSL 파서
+│   ├── interpreter.cpp  # 실행 엔진
+│   └── ast.cpp         # AST 구현
+├── main.cpp            # CLI 인터페이스
+
+haskell/spell-checker/   # Haskell 도구
+├── src/SpellChecker/
+│   ├── Parser.hs       # Spell 파서
+│   ├── TypeInfer.hs    # 타입 추론기
+│   └── Optimizer.hs    # 최적화 패스
+
+examples/               # 사용 예제
+├── basic/             # 기본 예제
+├── multilingual/      # 다국어 처리
+└── speech_synthesis/  # 음성 합성
+```
+
+## 🛠️ 개발 및 빌드
+
+### 빌드 도구
+
+```bash
+# 전체 빌드
+make build
+
+# 릴리즈 빌드
+make release
+
+# 테스트 실행
+make test
+
+# Haskell 컴포넌트 빌드
+make haskell
+
+# 예제 테스트
+make test-examples
+
+# 도움말
+make help
+```
+
+### 요구사항
+
+- **C++**: GCC 10+, Clang 11+, 또는 MSVC 2019+
+- **CMake**: 3.16 이상
+- **Haskell** (선택사항): GHC 9.4+ 및 Stack
+
 ## 📚 문서
 
-- [개발 계획서](docs/development-plan.md)
-- [문법 가이드](docs/grammar-guide.md)
-- [API 참조](docs/api-reference.md)
-- [예제 모음](examples/README.md)
+- [개발 계획서](docs/development-plan.md) - 프로젝트 아키텍처 및 설계 철학
+- [문법 가이드](docs/grammar-guide.md) - DSL 문법 상세 가이드
+- [API 참조](docs/api-reference.md) - 내장 함수 및 API 문서
+- [예제 모음](examples/README.md) - 다양한 사용 예제
+
+## 🔧 내장 함수
+
+### 텍스트 처리
+- `normalize()` - 텍스트 정규화 (공백 정리, 대소문자 변환)
+- `tokenize(delimiter)` - 텍스트 토큰화
+- `remove_punctuation()` - 구두점 제거
+- `length()` - 문자열 또는 리스트 길이
+
+### 한국어 처리
+- `korean_g2p()` - 한글 음소 변환
+- `hangul_to_jamo()` - 한글 자모 분해
+- `jamo_to_hangul()` - 자모 결합
+
+### 음성학 함수
+- `phonemize(lang)` - 음소 표기 변환
+- `stress_marking(lang)` - 강세 표시
+
+## 🌟 특징
+
+### 파이프라인 연산자
+```runescript
+text |> normalize() |> tokenize() |> korean_g2p() |> phonemize()
+```
+
+### 언어 독립적 설계
+```rune
+// 언어별 문자 정의
+define block hangul_syllables = U+AC00 .. U+D7AF
+group korean_vowels = ["ㅏ", "ㅓ", "ㅗ", "ㅜ"]
+lang "ko-KR" uses hangul_syllables, korean_vowels
+```
+
+### 사용자 정의 함수
+```spell
+def advanced_normalize(text) = 
+  text |> trim() |> to_lower() |> remove_extra_spaces()
+
+def korean_pipeline(text) = 
+  text |> advanced_normalize() |> korean_g2p() |> phonemize()
+```
 
 ## 🛠️ 개발 로드맵
 
 - [x] **1단계**: 프로젝트 구조 및 문서화
-- [ ] **2단계**: 파서 구현 (PEGTL/megaparsec)
-- [ ] **3단계**: AST 구조 및 테스트 케이스
-- [ ] **4단계**: 정적 타입 추론기 (Haskell)
-- [ ] **5단계**: SpellIR 및 최적화 패스
-- [ ] **6단계**: 인터프리터 및 CLI 도구
+- [x] **2단계**: C++ 파서 및 인터프리터 구현
+- [x] **3단계**: AST 구조 및 기본 테스트
+- [x] **4단계**: Haskell 타입 추론기 구현
+- [x] **5단계**: 최적화 패스 및 CLI 도구
+- [ ] **6단계**: 고급 음성학 기능 확장
+- [ ] **7단계**: 성능 최적화 및 병렬 처리
+- [ ] **8단계**: 웹 인터페이스 및 에디터 지원
 
 ## 🤝 기여하기
 
 기여를 환영합니다! [CONTRIBUTING.md](CONTRIBUTING.md)를 참고해주세요.
+
+### 기여 방법
+1. 이슈 생성 또는 기존 이슈 확인
+2. 포크 및 브랜치 생성
+3. 변경사항 구현
+4. 테스트 추가 및 실행
+5. Pull Request 생성
 
 ## 📄 라이센스
 
@@ -87,4 +202,12 @@ def korean_g2p(text) =
 
 ## 🙏 감사의 말
 
-이 프로젝트는 음성 합성 및 자연어 처리 분야의 연구와 실무 경험을 바탕으로 개발되었습니다.
+이 프로젝트는 음성 합성 및 자연어 처리 분야의 연구와 실무 경험을 바탕으로 개발되었습니다. 특히 다음 연구들에서 영감을 받았습니다:
+
+- Tacotron 2: Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions
+- FastSpeech 2: Fast and High-Quality End-to-End Text to Speech
+- VITS: Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech
+
+---
+
+**RuneScript DSL**로 언어의 경계를 넘나드는 마법같은 텍스트 처리를 경험해보세요! 🎩✨
