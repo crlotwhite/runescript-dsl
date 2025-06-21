@@ -1,0 +1,41 @@
+name: spell-checker
+version: 0.1.0.0
+synopsis: RuneScript Spell static type checker
+description: Haskell-based static type checker for RuneScript .spell files
+author: RuneScript DSL Team
+maintainer: runescript@example.com
+license: MIT
+
+dependencies:
+  - base >= 4.7 && < 5
+  - megaparsec >= 9.0
+  - parser-combinators
+  - text
+  - containers
+  - mtl
+  - transformers
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - SpellChecker.Parser
+    - SpellChecker.TypeInfer
+    - SpellChecker.AST
+    - SpellChecker.Optimizer
+
+executables:
+  spell-checker-exe:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - spell-checker
+      - optparse-applicative
+
+tests:
+  spell-checker-test:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - spell-checker
+      - hspec
+      - QuickCheck

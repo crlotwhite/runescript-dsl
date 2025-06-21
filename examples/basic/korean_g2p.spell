@@ -1,0 +1,34 @@
+// Korean Grapheme-to-Phoneme conversion functions
+// Demonstrates user-defined functions in .spell files
+
+def korean_g2p(text) = 
+  text |> hangul_to_jamo() |> apply_phonetic_rules() |> jamo_to_ipa()
+
+def hangul_to_jamo(text) = 
+  // Convert Hangul syllables to individual Jamo characters
+  decompose_hangul(text)
+  
+def apply_phonetic_rules(jamo_text) = 
+  // Apply Korean phonetic transformation rules
+  jamo_text 
+    |> palatalization_rule()
+    |> nasalization_rule()
+    |> final_consonant_rule()
+    
+def jamo_to_ipa(jamo_text) = 
+  // Convert Jamo to International Phonetic Alphabet
+  map_jamo_to_ipa(jamo_text)
+
+def palatalization_rule(text) = 
+  // ㄱ+ㅣ -> ㅈㅣ (ㄱ이 -> 치)
+  replace_pattern(text, /ㄱㅣ/, "ㅈㅣ")
+  
+def nasalization_rule(text) = 
+  // Nasal assimilation rules
+  text
+    |> replace_pattern(/ㅂㅁ/, "ㅁㅁ")  // ㅂㅁ -> ㅁㅁ
+    |> replace_pattern(/ㄷㄴ/, "ㄴㄴ")  // ㄷㄴ -> ㄴㄴ
+
+def final_consonant_rule(text) = 
+  // Korean final consonant pronunciation rules
+  replace_pattern(text, /[ㄱㄲㄴㄵㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ]$/, get_final_sound)

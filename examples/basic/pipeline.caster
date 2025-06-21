@@ -1,0 +1,30 @@
+// RuneScript execution pipeline configuration
+// Defines how the text processing pipeline should be executed
+
+// Load required modules
+load "korean_g2p.spell"
+load "korean.rune"
+
+// Set execution backend
+use_backend "cpp_runtime"
+
+// Define processing stages
+stage preprocessing: run "normalize_text"
+stage g2p_conversion: run "korean_g2p"
+stage phoneme_processing: run "phonemize"
+stage output_formatting: run "format_output"
+
+// Runtime configuration
+runtime {
+    threads = 4
+    cache_enabled = true
+    debug_mode = false
+    optimization_level = 2
+}
+
+// Execution schedule
+schedule {
+    pipeline_order = ["preprocessing", "g2p_conversion", "phoneme_processing", "output_formatting"]
+    parallel_stages = ["g2p_conversion", "phoneme_processing"]
+    checkpoint_stages = ["g2p_conversion"]
+}

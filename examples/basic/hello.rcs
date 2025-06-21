@@ -1,0 +1,13 @@
+// Basic RuneScript example
+// This demonstrates simple text processing pipeline
+
+import "korean_g2p.spell" as g2p
+
+// Define input text
+input = "안녕하세요, RuneScript로 음성 합성을 해보세요!"
+
+// Text processing pipeline
+result = input |> normalize() |> g2p.korean() |> phonemize()
+
+// Output result
+output result

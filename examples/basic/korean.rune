@@ -1,0 +1,24 @@
+// Korean language character definitions and rules
+// Defines Unicode ranges and character groups for Korean text processing
+
+// Define Korean Unicode blocks
+define block hangul_syllables = U+AC00 .. U+D7AF
+define block hangul_jamo = U+1100 .. U+11FF
+define block hangul_jamo_extended_a = U+A960 .. U+A97F
+define block hangul_jamo_extended_b = U+D7B0 .. U+D7FF
+define block hangul_compatibility_jamo = U+3130 .. U+318F
+
+// Define character groups
+group korean_vowels = ["ㅡ", "ㅢ", "ㅣ", "ㅤ", "ㅥ", "ㅦ", "ㅧ", "ㅨ", "ㅩ", "ㅪ", "ㅫ", "ㅬ", "ㅭ", "ㅮ", "ㅯ", "ㅰ", "ㅱ", "ㅲ", "ㅳ", "ㅴ", "ㅵ"]
+group korean_consonants = ["ㄱ", "ㄲ", "ㄴ", "ㄵ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"]
+group korean_double_consonants = ["ㄲ", "ㄸ", "ㅃ", "ㅉ", "ㅊ"]
+
+// Phonetic transformation rules
+rule palatalization: /ㄱㅣ/ => "ㅈㅣ"
+rule nasalization_bp: /ㅂㅁ/ => "ㅁㅁ"
+rule nasalization_kg: /ㄷㄴ/ => "ㄴㄴ"
+rule tensification: /ㄱㅈ/ => "ㅈㅈ"
+
+// Language profile
+lang "ko-KR" uses hangul_syllables, hangul_jamo, korean_vowels, korean_consonants
+lang "ko-KP" uses hangul_syllables, hangul_jamo, korean_vowels, korean_consonants
